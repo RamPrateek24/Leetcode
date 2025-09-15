@@ -1,38 +1,21 @@
 class Solution {
 public:
-    bool func(vector<int> v, int total){
-        vector<int> z;
-        if(v.size() > 63) return false;  
-        for(int i=0; i<(1LL<<(v.size())); i++){
-            int sum = 0;
-            for(int j = 0; j<v.size(); j++){
-                if((i & (1LL<<j))){
-                    sum += v[j];
-                }
-            }
-            if(sum == total/2) return true;
-        }
-        return false;
-    }
     bool canPartition(vector<int>& nums) {
-        int total = accumulate(nums.begin(), nums.end(), 0);
-        if (total % 2 != 0) return false;
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        if(sum%2 != 0) return false;
+        vector<vector<bool>> dp(nums.size()+1, vector<bool> (sum/2+1));
+        for (int i = 0; i <= nums.size(); i++) dp[i][0] = true;
+        for (int j = 1; j <= sum/2; j++) dp[0][j] = false;
 
-        int target = total / 2;
-        unordered_set<int> sums = {0};
-
-        for (int num : nums) {
-            unordered_set<int> newSums;
-            for (int s : sums) {
-                int newSum = s + num;
-                if (newSum == target) return true;
-                newSums.insert(newSum);
-            }
-            for (int s : newSums) {
-                sums.insert(s);
+        for(int i=1; i<=nums.size(); i++){
+            for(int j=1; j<=sum/2; j++){
+                if(nums[i-1] <= j){
+                    dp[i][j] = (dp[i-1][j - nums[i-1]] || dp[i-1][j]);
+                }
+                else dp[i][j] = dp[i-1][j];
+                if(j == sum/2 && dp[i][j] == true) return true; 
             }
         }
-
         return false;
     }
 };
