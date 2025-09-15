@@ -1,7 +1,7 @@
 class Solution {
 public:
     int canBeTypedWords(string text, string brokenLetters) {
-        set<char> s;
+        unordered_set<char> s;
         for(auto &it: brokenLetters){
             s.insert(it);
         }
